@@ -104,6 +104,9 @@ These libraries are available via the Arduino IDE in-application library manager
   </tr>
 </table>
 
+## Demo
+
+https://github.com/user-attachments/assets/0de3aaef-9f19-4322-9718-fc8856e2a57e
 
 ## Repository Structure
 
