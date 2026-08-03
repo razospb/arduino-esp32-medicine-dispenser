@@ -77,17 +77,32 @@ These libraries are available via the Arduino IDE in-application library manager
 
 ## Gallery
 
-### Block Diagram
-![](images/diagram-block.PNG)
-
-### Breadboard Wiring Diagram
-![](images/diagram-wiring.PNG)
-
-### Prototype
-![](images/prototype.png)
-
-### Telegram
-![](images/telegram.png)
+<table align="center">
+  <tr>
+    <th align="center">Block Diagram</th>
+    <th align="center">Breadboard Wiring Diagram</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="images/diagram-block.PNG" height="280">
+    </td>
+    <td align="center">
+      <img src="images/diagram-wiring.PNG" height="280">
+    </td>
+  </tr>
+  <tr>
+    <th align="center">Prototype</th>
+    <th align="center">Telegram Notifications</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="images/prototype.png" height="280">
+    </td>
+    <td align="center">
+      <img src="images/telegram.png" height="280">
+    </td>
+  </tr>
+</table>
 
 
 ## Repository Structure
