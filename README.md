@@ -2,10 +2,9 @@
 
 An Arduino and ESP32-based embedded system that schedules medication intake, automatically dispenses pill bottles, and sends real-time Telegram notifications to a caregiver.
 
-![Project Status](https://img.shields.io/badge/status-archived-lightgrey)
-![Platform](https://img.shields.io/badge/platform-Arduino%20%7C%20ESP32-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-
+[![Project Status](https://img.shields.io/badge/status-archived-lightgrey)](https://github.com/razospb?tab=repositories)
+[![Platform](https://img.shields.io/badge/platform-Arduino%20%7C%20ESP32-blue)](https://www.arduino.cc/en/software/)
+[![License](https://img.shields.io/badge/license-MIT-green)](https://github.com/razospb/arduino-esp32-medicine-dispenser/blob/main/LICENSE)
 
 ## Overview
 
