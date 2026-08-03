@@ -78,10 +78,10 @@ These libraries are available via the Arduino IDE in-application library manager
 ## Gallery
 
 ### Block Diagram
-![](images/diagram-block.png)
+![](images/diagram-block.PNG)
 
 ### Breadboard Wiring Diagram
-![](images/diagram-wiring.png)
+![](images/diagram-wiring.PNG)
 
 ### Prototype
 ![](images/prototype.png)
@@ -98,9 +98,6 @@ Arduino/
 
 ESP32/
     ESP32 firmware
-
-docs/
-    Schematics, wiring diagrams, documentation
 
 images/
     Photos and screenshots
