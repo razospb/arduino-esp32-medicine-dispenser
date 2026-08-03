@@ -167,7 +167,16 @@ Some ideas that were beyond the scope of the project include:
 >
 > It is preserved as the final version of our Embedded Systems course project and may serve as a learning resource for similar Arduino and ESP32 projects.
 
----
+
+## Authors
+
+This project was developed by:
+
+- Sean Patrick Razo
+- Thoinby Ace Tangan
+- Fiona Mae Brazal
+
+This repository is maintained by Sean Patrick Razo as an archival copy of the final project.
 
 ## License
 
