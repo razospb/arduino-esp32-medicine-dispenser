@@ -1,62 +1,56 @@
 void pageSched() {
-  char* dayNight;
-  byte hourConv;
+  char* meridiem;
+  byte displayHour;
 
-  // Print Schedule 1
-  dayNight = amPM(alarm1[0]);
-  hourConv = twelveHour(alarm1[0]);
-  sprintf(sched, "Sched 1: %02d:%02d %s", hourConv, alarm1[1], dayNight);
+  // Display Schedule 1
+  meridiem = amPM(alarm1[0]);
+  displayHour = twelveHour(alarm1[0]);
+  sprintf(sched, "Sched 1: %02d:%02d %s", displayHour, alarm1[1], meridiem);
   lcd.setCursor(0,0);
   lcd.print(sched);
 
-  // Print Schedule 2
-  dayNight = amPM(alarm2[0]);
-  hourConv = twelveHour(alarm2[0]);
-  sprintf(sched, "Sched 2: %02d:%02d %s", hourConv, alarm2[1], dayNight);
+  // Display Schedule 2
+  meridiem = amPM(alarm2[0]);
+  displayHour = twelveHour(alarm2[0]);
+  sprintf(sched, "Sched 2: %02d:%02d %s", displayHour, alarm2[1], meridiem);
   lcd.setCursor(0,1);
   lcd.print(sched);
 
-  // Print Schedule 3
-  dayNight = amPM(alarm3[0]);
-  hourConv = twelveHour(alarm3[0]);
-  sprintf(sched, "Sched 3: %02d:%02d %s", hourConv, alarm3[1], dayNight);
+  // Display Schedule 3
+  meridiem = amPM(alarm3[0]);
+  displayHour = twelveHour(alarm3[0]);
+  sprintf(sched, "Sched 3: %02d:%02d %s", displayHour, alarm3[1], meridiem);
   lcd.setCursor(0,2);
   lcd.print(sched);
 
-  // Print 4th line information
+  // Display the current dispenser status.
   lcd.setCursor(0, 3);
-  if (alarmActive == false) {
+  if (!alarmActive) {
     sprintf(sched, "Bottles Left: %02d", bottleCount);
     lcd.print(sched);
-  }
-  else {
+  } else {
     lcd.print("Take Medicine!!!");
   }
 }
 
-// Sets the value of dayNight depending on hour
-char* amPM(byte x) {
-  char* time;
-  if (x < 12) {
-    time = "AM";
+// Sets the value of meridiem depending on hour
+char* amPM(byte hour) {
+  char* period;
+  if (hour < 12) {
+    return "AM";
   }
-  else if (x >= 12) {
-    time = "PM";
-  }
-  return time;
+  return "PM";
 }
 
 // Converts 24hr format to 12hr format
-byte twelveHour(byte x) {
-  byte time;
-  if (x >= 13) {
-    time = x - 12;
+byte twelveHour(byte hour) {
+  if (hour >= 13) {
+    return hour - 12;
   }
-  else if (x == 0) {
-    time = 12;
+  
+  if (hour == 0) {
+      return 12;
   }
-  else {
-    time = x;
-  }
-  return time;
+  
+  return hour;
 }

@@ -1,39 +1,37 @@
-void checkTaken(bool w, byte x) {
-  // Retreive Time
+void checkTaken(bool alarmEnabled, byte alarmNumber) {
+  // Retrieve Time
   DateTime now = rtc.now();
   currentTime = millis();
 
-  if (w == true) {
-    // Check for which alarm hour is active
-    if (x == 1) {
-      // Check if current time is 1 minute past alarm time
+  if (alarmEnabled) {
+    // Determine which scheduled alarm is currently active
+    if (alarmNumber == 1) {
+      // Check whether the reminder window is active (1–60 minutes after the alarm)
       if ((now.minute() >= (alarm1[1] + 1)) && (now.minute() <= (alarm1[1] + 60))) {
-        // Send Notifications every 1 minute
+        // Send a reminder notification once every minute
         if (currentTime - previousTime > intervalTime) {
-          // Send "Medicine NOT Taken" notif to ESP-32 via UART
-          Serial.println("2");
+          // Notify the ESP32 that the medicine has not yet been taken
+          Serial.println(MSG_NO_RESPONSE);
           previousTime = currentTime;
         }
       }
-    }
-    else if (x == 2) {
-      // Check if current time is 1 minute past alarm time
+    } else if (alarmNumber == 2) {
+      // Check whether the reminder window is active (1–60 minutes after the alarm)
       if ((now.minute() >= (alarm2[1] + 1)) && (now.minute() <= (alarm2[1] + 60))) {
-        // Send Notifications every 1 minute
+        // Send a reminder notification once every minute
         if (currentTime - previousTime > intervalTime) {
-          // Send "Medicine NOT Taken" notif to ESP-32 via UART
-          Serial.println("2");
+          // Notify the ESP32 that the medicine has not yet been taken
+          Serial.println(MSG_NO_RESPONSE);
           previousTime = currentTime;
         }
       }
-    }
-    else if (x == 3) {
-      // Check if current time is 1 minute past alarm time
+    } else if (alarmNumber == 3) {
+      // Check whether the reminder window is active (1–60 minutes after the alarm)
       if ((now.minute() >= (alarm3[1] + 1)) && (now.minute() <= (alarm3[1] + 60))) {
-        // Send Notifications every 1 minute
+        // Send a reminder notification once every minute
         if (currentTime - previousTime > intervalTime) {
-          // Send "Medicine NOT Taken" notif to ESP-32 via UART
-          Serial.println("2");
+          // Notify the ESP32 that the medicine has not yet been taken
+          Serial.println(MSG_NO_RESPONSE);
           previousTime = currentTime;
         }
       }

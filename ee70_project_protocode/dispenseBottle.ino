@@ -1,15 +1,11 @@
-// Function for dispensing bottle
+// Dispense a medicine bottle and update the remaining supply.
 void dispenseBottle() {
-  // Initiate servo movements
-  if (bottleCount == 1) {
-    servo1.write(100);
-    delay(500);
-    servo1.write(180);
-  }
-  else {
-    servo1.write(100);
-    delay(500);
-    servo1.write(180);
+  // Dispense one bottle using the servo mechanism.
+  servo1.write(100);
+  delay(500);
+  servo1.write(180);
+  
+  if (bottleCount > 1) {
     delay(1100);
     servo2.write(80);
     delay(500);
@@ -17,29 +13,27 @@ void dispenseBottle() {
     delay(1000);
   }
 
-  // decrement or set bottleCount to 0
+  // Update the remaining bottle count.
   if (bottleCount > 0) {
     bottleCount--;
 
     if (bottleCount == 0) {
       // Send "Medicine Taken" notif to ESP-32 via UART
-      Serial.println("1");
+      Serial.println(MSG_MEDICINE_TAKEN);
 
-      // Wait for 5 seconds to process UART
+      // Allow the ESP32 time to process the first notification.
       delay(5000);
 
       // Send "Supply Empty" notif to ESP-32 via UART
-      Serial.println("3");
-    }
-    else {
+      Serial.println(MSG_SUPPLY_EMPTY);
+    } else {
       // Send "Medicine Taken" notif to ESP-32 via UART
-      Serial.println("1");      
+      Serial.println(MSG_MEDICINE_TAKEN);
     }
-  }
-  else {
+  } else {
     bottleCount = 0;
 
     // Send "Supply empty" notif to ESP-32 via UART
-    Serial.println("3");
+    Serial.println(MSG_SUPPLY_EMPTY);
   }
 }

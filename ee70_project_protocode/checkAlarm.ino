@@ -1,15 +1,16 @@
-byte checkAlarm(byte x, byte y, byte z) {
-  // Retreive Time
+bool checkAlarm(byte x, byte y, byte z) {
+  // Retrieve current RTC time
   DateTime now = rtc.now();
 
-  // Check if time matches selected alarm
-  if (now.hour() == x && now.minute() == y && now.second() == z) {
-    return true;
-  }
-  else  
-    return false;
+  // Return true if the current time matches the scheduled alarm
+  return (
+    now.hour()   == hour &&
+    now.minute() == minute &&
+    now.second() == second
+  );
 }
 
+// Reset all alarm states after an alarm has been handled.
 void disableAlarms() {
   isAlarm1 = false;
   isAlarm2 = false;

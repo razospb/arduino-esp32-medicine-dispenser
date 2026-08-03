@@ -2,15 +2,15 @@ void selectAlarm() {
   lcd.setCursor(0, 0);
   lcd.print("Edit Alarm #:");
 
-  // Read the current state of potentiometer & map values
+  // Read the potentiometer and map it to an alarm number.
   knobVal = analogRead(pin_pot);
   setCounter = map(knobVal, 0, 1023, 1, 4);
 
-  // Print current alarm# selection
+  // Display the selected alarm number.
   lcd.setCursor(14, 0);
   lcd.print(setCounter);
 
-  // Confirms the alarm# selection
+  // Confirm the selected alarm.
   if (digitalRead(pin_setAlarm) == HIGH) {
     delay(1000);
     chosenAlarm = setCounter;
@@ -23,11 +23,11 @@ void setHour() {
   lcd.setCursor(0, 0);
   lcd.print("Set Hour #:");
 
-  // Read the current state of potentiometer
+  // Read the potentiometer and map it to a 24-hour value.
   knobVal = analogRead(pin_pot);
   hourCounter = map(knobVal, 0, 1023, 0, 24);
   
-  // Print the current hour# selection
+  // Display the selected hour in 12-hour format.
   // Formatting for 12 AM
   if (hourCounter == 0) {
     lcd.setCursor(12, 0);
@@ -35,7 +35,7 @@ void setHour() {
     lcd.setCursor(15, 0);
     lcd.print("AM");
   }
-  // Formatting for 1 AM - 9 AM
+  // Formatting for 1–9 AM
   if (hourCounter > 0 && hourCounter < 10) {
     lcd.setCursor(13, 0);
     lcd.print(hourCounter);
@@ -44,7 +44,7 @@ void setHour() {
     lcd.setCursor(15, 0);
     lcd.print("AM");
   }
-  // Formatting for 10 AM - 11 AM
+  // Formatting for 10-11 AM
   else if (hourCounter >= 10 && hourCounter < 12) {
     lcd.setCursor(12, 0);
     lcd.print(hourCounter);
@@ -58,7 +58,7 @@ void setHour() {
     lcd.setCursor(15, 0);
     lcd.print("PM");
   }
-  // Formatting for 1 PM - 9 PM
+  // Formatting for 1-9 PM
   else if (hourCounter > 12 && hourCounter < 22) {
     lcd.setCursor(13, 0);
     lcd.print(hourCounter - 12);
@@ -67,7 +67,7 @@ void setHour() {
     lcd.setCursor(15, 0);
     lcd.print("PM");
   }
-  // Formatting for 10 PM - 11 PM
+  // Formatting for 10-11 PM
   else if (hourCounter >= 22) {
     lcd.setCursor(12, 0);
     lcd.print(hourCounter - 12);
@@ -75,7 +75,7 @@ void setHour() {
     lcd.print("PM");
   }
 
-  // Confirms the hour# selection then overwrite sched
+  // Save the selected hour to the chosen alarm.
   if (digitalRead(pin_setAlarm) == HIGH) {
     delay(300);
     switch (chosenAlarm) {
@@ -98,23 +98,22 @@ void setMinute() {
   lcd.setCursor(0, 0);
   lcd.print("Set Minute #:");
 
-  // Read the current state of potentiometer
+  // Read the potentiometer and map it to a minute value.
   knobVal = analogRead(pin_pot);
   minuteCounter = map(knobVal, 0, 1023, 0, 60);
 
-  // Print the current minute# selection
+  // Display the selected minute.
   if (minuteCounter < 10) {
     lcd.setCursor(14, 0);
     lcd.print(minuteCounter);
     lcd.setCursor(15, 0);
     lcd.print(" ");
-  }
-  else {
+  } else {
     lcd.setCursor(14, 0);
     lcd.print(minuteCounter);
   }
 
-  // Confirms the minute# selection then overwrite sched
+  // Save the selected minute to the chosen alarm.
   if (digitalRead(pin_setAlarm) == HIGH) {
     delay(300);
     switch (chosenAlarm) {

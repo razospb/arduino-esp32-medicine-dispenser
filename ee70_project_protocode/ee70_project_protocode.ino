@@ -26,15 +26,12 @@
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 // RTC variables
-char time[32];
 char sched[32];
 bool alarmActive = false;
-bool isAlarmActive = false;
 bool isAlarm1 = false;
 bool isAlarm2 = false;
 bool isAlarm3 = false;
 RTC_DS3231 rtc;
-byte Hour, Minute, Second;
 
 // Schedule Arrays
 byte alarm1[3] = {8, 0, 0};
@@ -48,7 +45,7 @@ byte alarm3[3] = {0, 0, 0};
 NewPing sonar(pin_Trigger, pin_Echo, maxDistance);
 int sonarDistance = 0;
 
-// Alarm Control variables
+// Variables used while configuring medication schedules
 #define pin_pot A0
 int knobVal;
 bool bool_selectAlarm = false;
@@ -66,23 +63,27 @@ byte setCounter, hourCounter, minuteCounter, chosenAlarm, alarmType;
 #define pin_reload A2
 bool override = false;
 
-// Servo variables
+// Pill dispenser state
 Servo servo1;
 Servo servo2;
 byte bottleCount = 6;
 byte bottleCount_default = 6;
 
+// UART messages sent to the ESP32
+const char MSG_MEDICINE_TAKEN[] = "1";
+const char MSG_NO_RESPONSE[]    = "2";
+const char MSG_SUPPLY_EMPTY[]   = "3";
+
 // Function Prototypes (for anti-error in compiling)
-void printTime();
 void dispenseBottle();
-void showPage1();
 void disableAlarms();
-char* amPM(byte x);
-byte twelveHour(byte x);
+char* meridiem(byte hour);
+byte twelveHour(byte hour);
 void selectAlarm();
 void setHour();
 void setMinute();
-void checkTaken(bool w, byte x);
+bool checkAlarm(byte hour, byte minute, byte second);
+void checkTaken(bool alarmEnabled, byte alarmNumber);
 
 
 
@@ -106,16 +107,17 @@ void setup() {
   
   // LCD initialization
   lcd.init();
-  lcd.clear();         
+  lcd.clear();
   lcd.backlight();
 
   // Set default states
   previousTime = 0;
   intervalTime = 60000;
   
-  //Servo Code
+  // Initialize bottle dispensing servos
   servo1.attach(5);
   servo1.write(180);
+
   servo2.attach(6);
   servo2.write(0);
 
@@ -146,36 +148,36 @@ void loop() {
     // Initiate alarm selection
     delay(300);
     lcd.clear();
-    while (bool_selectAlarm == true){
+    while (bool_selectAlarm){
       selectAlarm();
     }
 
     // Initiate hour selection
     lcd.clear();
-    while (bool_setHour == true) {
+    while (bool_setHour) {
       setHour();
     }
 
     // Initiate minute selection
     lcd.clear();
-    while (bool_setMinute == true) {
+    while (bool_setMinute) {
       setMinute();
     }
   }
 
-  // Alarm Code — Sound buzzer and Display Reminder
+  // Check whether the current RTC time matches any configured alarm
   isAlarm1 = checkAlarm(alarm1[0], alarm1[1], alarm1[2]);
   isAlarm2 = checkAlarm(alarm2[0], alarm2[1], alarm2[2]);
   isAlarm3 = checkAlarm(alarm3[0], alarm3[1], alarm3[2]);
-  if (isAlarm1 == true || isAlarm2 == true || isAlarm3 == true || override == true) {
-    // Determine alarm type
-    if (isAlarm1 == true) {
+  if (isAlarm1 || isAlarm2 || isAlarm3 || override) {
+    // Identify which alarm triggered
+    if (isAlarm1) {
       alarmType = 1;
     }
-    else if (isAlarm2 == true) {
+    else if (isAlarm2) {
       alarmType = 2;
     }
-    else if (isAlarm3 == true) {
+    else if (isAlarm3) {
       alarmType = 3;
     }
     
@@ -187,19 +189,19 @@ void loop() {
   // Check which alarm type is active
   checkTaken(alarmActive, alarmType);
 
-  // Execute Bottle Dispensing
-  if (alarmActive == true && sonarDistance <= 4) {
+  // Dispense a bottle once a hand is detected
+  if (alarmActive && sonarDistance <= 4) {
     // Disable Alarm
     digitalWrite(pin_Buzz, LOW);
     disableAlarms();
     
-    // Execute actions; otherwise, notify of empty tray
+    // Dispense a bottle if stock remains; otherwise notify the guardian
     if (bottleCount > 0) {
       dispenseBottle();
     }
     else {
       // Send "Supply empty" notif to ESP-32 via UART
-      Serial.println("3");
+      Serial.println(MSG_SUPPLY_EMPTY);
     }
 
     // Clear LCD for Homescreen
