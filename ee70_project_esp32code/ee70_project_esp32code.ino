@@ -22,48 +22,54 @@
 #include <UniversalTelegramBot.h>
 #include <ArduinoJson.h>
 
-// Define values for UART comms
-#define RX 16
-#define TX 17
+// UART pin assignments for communication with the Arduino Uno.
+constexpr uint8_t RX_PIN = 16;
+constexpr uint8_t TX_PIN = 17;
 
-// Serial variables
-int data;
-bool newData = false;
+// UART communication state.
+int messageCode;
+bool hasNewData = false;
 
-// Interval variables
+constexpr int MSG_MEDICINE_TAKEN = 1;
+constexpr int MSG_NO_RESPONSE    = 2;
+constexpr int MSG_SUPPLY_EMPTY   = 3;
+
+// Wi-Fi reconnection timer.
 unsigned long previousMillis = 0;
-unsigned long interval = 30000;
+const unsigned long WIFI_RECONNECT_INTERVAL = 30000;
 
-// Replace with network credentials
+// Replace these placeholders with your own Wi-Fi credentials.
 const char* ssid = "YOUR_WIFI_SSID";
 const char* password = "YOUR_WIFI_PASSWORD";
 
-// Initialize Telegram BOT
+// Telegram Bot configuration.
 #define BOTtoken "YOUR_TELEGRAM_BOT_TOKEN"  // your Bot Token (Get from Botfather)
 
-// Use @myidbot to find out the chat ID of an individual or a group
+// Use @myidbot to obtain your Telegram Chat ID.
 #define CHAT_ID "YOUR_CHAT_ID"
 
 WiFiClientSecure client;
 UniversalTelegramBot bot(BOTtoken, client);
 
 void setup() {
-  // Begin serial commminications
+  // Initialize serial communication.
   Serial.begin(115200);
-  Serial2.begin(9600, SERIAL_8N1, RX, TX);
+  Serial2.begin(9600, SERIAL_8N1, RX_PIN, TX_PIN);
 
   // Set built-in LED to output as visual indicator
   pinMode(2, OUTPUT);
 
-  // Attempt to connect to Wifi network:
+  // Connect to the configured Wi-Fi network.
   Serial.print("Connecting Wifi: ");
   Serial.println(ssid);
 
-  // Connect to WiFi codes
+  // Configure the Wi-Fi interface.
   digitalWrite(2, HIGH);
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  client.setCACert(TELEGRAM_CERTIFICATE_ROOT); // Add root certificate for api.telegram.org
+
+  // Add root certificate for api.telegram.org
+  client.setCACert(TELEGRAM_CERTIFICATE_ROOT);
   
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
@@ -83,36 +89,37 @@ void setup() {
 
 void loop() {
   // If new data is received in Serial2, execute actions
-  if (Serial2.available() > 0) {
-    data = Serial2.parseInt();
-    newData = true;
+  if (Serial2.available()) {
+    messageCode = Serial2.parseInt();
+    hasNewData = true;
   }
 
-  if (newData == true) {
+  if (hasNewData) {
     // Turn on LED during processing
     digitalWrite(2, HIGH);
-    switch (data) {
-      case 1:
-        Serial.println("Sending notif 1...");
+    switch (messageCode) {
+      case MSG_MEDICINE_TAKEN:
+        Serial.println("Sending: Medicine Taken");
         bot.sendMessage(CHAT_ID, "💊 MEDICINE TAKEN 💊\n\nLola Flora has successfully taken her prescribed medicines at this hour!", "");
         break;
-      case 2:
-        Serial.println("Sending notif 2...");
+      case MSG_NO_RESPONSE:
+        Serial.println("Sending: No Response");
         bot.sendMessage(CHAT_ID, "❗ NO RESPONSE ❗\n\nIt seems that Lola Flora is yet to take her medicines! Why don't you check on her to see if something is wrong?", "");
         break;
-      case 3:
-        Serial.println("Sending notif 3...");
+      case MSG_SUPPLY_EMPTY:
+        Serial.println("Sending: Supply Empty");
         bot.sendMessage(CHAT_ID, "🫙 MEDICINE SUPPLY EMPTY 🫙\n\nNo medicines left! Refill the supply as soon as possible!", "");
         break;
     }
-    newData = false;
+    hasNewData = false;
     delay(10);
-    // Turn ooff LED during processing
+    // Turn off LED during processing
     digitalWrite(2, LOW);
 
     // if WiFi is down, try reconnecting every CHECK_WIFI_TIME seconds
     unsigned long currentMillis = millis();
-    if ((WiFi.status() != WL_CONNECTED) && (currentMillis - previousMillis >=interval)) {
+    if ((WiFi.status() != WL_CONNECTED) &&
+        (currentMillis - previousMillis >= WIFI_RECONNECT_INTERVAL)) {
       Serial.print(millis());
       Serial.println("Reconnecting to WiFi...");
       WiFi.disconnect();
